@@ -4,32 +4,34 @@
 // version: 1.0.0
 
 #include "stdafx.h"
-#include "string"
 #include "afx.h"
 #include "locale.h"
-#include <vector>
+#include "vector"
+
 using namespace std;
 
-void read_file(char* file) {
+// read file
+void read_file(const wchar_t* file) {
     FILE* fp;
     errno_t err_no;
-    err_no = fopen_s(&fp, file, "r");
+    err_no = _wfopen_s(&fp, file, _T("r, ccs=UNICODE"));
+    printf("%d\n", err_no);
     if (0 == err_no) {
-        char c;
-        c = fgetc(fp);
-        while (c != EOF) {
-            putchar(c);
-            c = fgetc(fp);
+        wchar_t c;
+        c = fgetwc(fp);
+        while (c != WEOF) {
+            printf("%S\n", c);
+            //putchar(c);
+            c = fgetwc(fp);
         }
         fclose(fp);
     }
-    //printf("%p\n", fp);
 
 }
 
 // list files in specified directory
-void list_files(vector<CStringW> files_arr, LPCTSTR pstr) {
-    printf("%d\n", files_arr.size());
+// and put each files into the passed vector container
+void list_files(vector<CStringW> & files_arr, LPCTSTR pstr) {
     CFileFind finder;
     CStringW strWildcard(pstr);
     strWildcard += _T("\\*.*");
@@ -62,19 +64,13 @@ int _tmain(int argc, _TCHAR* argv[])
 {
     vector<CStringW> files_arr;
     setlocale(LC_ALL, "chs");
-    //read_file();
-    //char* test = "E:\\需求";
-    //CString pstr = (CString)test;
-    //LPCTSTR pstr = test;
     list_files(files_arr, _T("E:\\需求"));
-    //vector<CStringW>::iterator it = files_arr.begin();
-    //for (; it < files_arr.end; it++) {
-    //    printf("%s\n", files_arr.at(it));
-    //}
-    //printf("%d\n", files_arr.size());
-    for (int i = 0; i < files_arr.size(); i++) {
-        //printf("%s\n", files_arr.at(i));
+    for (unsigned int i = 0; i < files_arr.size(); i++) {
+        wchar_t* file_path = (LPWSTR)(LPCTSTR)files_arr.at(i);
+        printf("%S\n", file_path);
+        read_file(file_path);
     }
+    //read_file("E:\\需求\\2000年中国出口智利.csv");
 
 	return 0;
 }
