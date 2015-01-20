@@ -7,34 +7,52 @@
 #include "afx.h"
 #include "locale.h"
 #include "vector"
+#include "target.h"
 
 using namespace std;
 
 // read file
-void read_file(const wchar_t* file) {
+void read_file(LPCWSTR file);
+
+// list files in specified directory
+// and put each files into the passed vector container
+void list_files(vector<CStringW> & files_arr, LPCTSTR pstr);
+
+// split a string using the specified symbol
+vector<CStringW> split(CStringW str, char symbol);
+
+void _parse_line(LPWSTR line, short index);
+
+// create a new file and write into the content
+void write_file();
+
+void read_file(LPCWSTR file) {
     FILE* fp;
     errno_t err_no;
     err_no = _wfopen_s(&fp, file, _T("r, ccs=UNICODE"));
-    printf("%d\n", err_no);
     if (0 == err_no) {
-        wchar_t c;
-        c = fgetwc(fp);
-        while (c != WEOF) {
-            printf("%S\n", c);
-            //putchar(c);
-            c = fgetwc(fp);
+        //wchar_t c;
+        wchar_t line[100];
+        while ((fgetws(line, 100, fp)) != NULL) {
+            _parse_line(line, 2);
         }
+        //c = fgetwc(fp);
+        /*while (c != WEOF) {
+            if (c == '\n') {
+                printf("%s\n", "---------");
+            }
+            putwchar(c);
+            c = fgetwc(fp);
+        }*/
         fclose(fp);
     }
 
 }
 
-// list files in specified directory
-// and put each files into the passed vector container
 void list_files(vector<CStringW> & files_arr, LPCTSTR pstr) {
     CFileFind finder;
     CStringW strWildcard(pstr);
-    strWildcard += _T("\\*.*");
+    strWildcard += _T("\\*.csv*");
     BOOL bWorking = finder.FindFile(strWildcard);
     while (bWorking) {
         bWorking = finder.FindNextFile();
@@ -53,7 +71,33 @@ void list_files(vector<CStringW> & files_arr, LPCTSTR pstr) {
     finder.Close();
 }
 
-void parse_file() {
+void _parse_line(LPWSTR line, short index) {
+    vector<CStringW> v = split(line, ',');
+    for (unsigned int i = 0; i < v.size(); i++) {
+        printf("%S\n", v.at(i));
+    }
+}
+
+BOOL belongs_to(LPWSTR str, vector<LPWSTR> target_array) {
+    int i = 0, len = target_array.size();
+    for (; i < len; i++) {
+        if (target_array.at(i) == str) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+vector<CStringW> split(CStringW str, char symbol) {
+    int index, len;
+    vector<CStringW> result;
+    while ((index = str.Find(symbol)) != -1) {
+        result.push_back(str.Left(index));
+        len = str.GetLength();
+        str = CStringW(str.Right(len - index - 1));
+    }
+    result.push_back(str);
+    return result;
 }
 
 // create a new file
@@ -67,10 +111,8 @@ int _tmain(int argc, _TCHAR* argv[])
     list_files(files_arr, _T("E:\\需求"));
     for (unsigned int i = 0; i < files_arr.size(); i++) {
         wchar_t* file_path = (LPWSTR)(LPCTSTR)files_arr.at(i);
-        printf("%S\n", file_path);
         read_file(file_path);
     }
-    //read_file("E:\\需求\\2000年中国出口智利.csv");
 
 	return 0;
 }
