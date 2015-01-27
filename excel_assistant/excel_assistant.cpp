@@ -4,35 +4,14 @@
 // version: 1.0.0
 
 #include "stdafx.h"
-#include "afx.h"
-#include "locale.h"
-#include "vector"
-#include "direct.h"
+#include <afx.h>
+#include <locale.h>
+#include <direct.h>
 #include "target.h"
 #define MAX_CSV_LINE 1000
 #define SPECIFIED_POSITION 14
 
 using namespace std;
-// read file
-void read_file(vector<CStringW> & pp_res, vector<CStringW> & lt_res,
-    vector<CStringW> & mt_res, vector<CStringW> & ht_res, LPCWSTR file);
-
-// list files in specified directory
-// and put each files into the passed vector container
-void list_files(vector<CStringW> & files_arr, LPCTSTR pstr);
-
-// split a string using the specified symbol
-vector<CStringW> split(CStringW str, char symbol);
-
-BOOL belongs_to(CStringW str, vector<CStringW> target_array);
-
-void _parse_line(vector<CStringW> & pp_res, vector<CStringW> & lt_res,
-    vector<CStringW> & mt_res, vector<CStringW> & ht_res, CStringW line, short index);
-
-// create a new file and write into the content
-void write_folder(CStringW path);
-
-void write_file(CStringW path, vector<CStringW> lines);
 
 void read_file(vector<CStringW> & pp_res, vector<CStringW> & lt_res,
     vector<CStringW> & mt_res, vector<CStringW> & ht_res, LPCWSTR file) {
@@ -162,7 +141,6 @@ void write_folder(CStringW path) {
 }
 
 void write_file(CStringW path, vector<CStringW> lines) {
-    printf("咱呆呆读完了, 现在正在写文件, 某胖等着啊...\n");
     int i = 0, len = lines.size();
     /*if (len < MAX_CSV_LINE) {
         num = 1;
@@ -202,7 +180,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
     setlocale(LC_ALL, "chs");
     list_files(files_arr, _T("E:\\files"));
-    printf("咱呆呆正在读文件, 等着啊某胖...\n");
     for (unsigned int i = 0; i < files_arr.size(); i++) {
         LPWSTR file_path = (LPWSTR)(LPCTSTR)files_arr.at(i);
         read_file(pp_res, lt_res, mt_res, ht_res, file_path);

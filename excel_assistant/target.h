@@ -1,3 +1,26 @@
+#include <vector>
+
+// read file
+void read_file(std::vector<CStringW> & pp_res, std::vector<CStringW> & lt_res,
+    std::vector<CStringW> & mt_res, std::vector<CStringW> & ht_res, LPCWSTR file);
+
+// list files in specified directory
+// and put each files into the passed vector container
+void list_files(std::vector<CStringW> & files_arr, LPCTSTR pstr);
+
+// split a string using the specified symbol
+std::vector<CStringW> split(CStringW str, char symbol);
+
+BOOL belongs_to(CStringW str, std::vector<CStringW> target_array);
+
+void _parse_line(std::vector<CStringW> & pp_res, std::vector<CStringW> & lt_res,
+    std::vector<CStringW> & mt_res, std::vector<CStringW> & ht_res, CStringW line, short index);
+
+// create a new file and write into the content
+void write_folder(CStringW path);
+
+void write_file(CStringW path, std::vector<CStringW> lines);
+
 const CStringW PP = "001,011,012,016,017,022,023,024,025,036,037,\
                                 041,042,043,044,045,046,047,048,054,056,057,058,\
                                             059,061,062,071,072,073,074,075,081,091,098,111,\
